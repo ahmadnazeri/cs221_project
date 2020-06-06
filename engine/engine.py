@@ -14,9 +14,9 @@ class Engine:
         self._color = color
         self._moves = []
         self._opponent = "white" if color=="black" else "black"
-        self._depth = 4
+        self._depth = depth
         # 1=PAWN, 2=KNIGHT, 3=BISHOP, 4=ROOK, 5=QUEEN, 6=KING
-        self._piece_type_values = {1: 1, 2: 3, 3: 3, 4: 5, 5:9, 6:100}
+        self._piece_type_values = {1: 1, 2: 3, 3: 3, 4: 5, 5:9, 6:0}
 
     def find_next_move(self):
         """
@@ -25,7 +25,7 @@ class Engine:
 
         _, board, moves = self._minimax(self._board, self._color, self._depth)
 
-        return moves[0]
+        return moves
 
 
     def _minimax(self, board, color_turn, depth):
@@ -96,9 +96,9 @@ class Engine:
             multipler = 1
 
         if board.is_checkmate():
-            return 10000*multipler
+            return 1000000*multipler
         elif board.is_check():
-            return 100*multipler
+            return 10000*multipler
         elif board.is_insufficient_material():
             return -10*multipler
         else:
