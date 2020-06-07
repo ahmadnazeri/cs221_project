@@ -3,7 +3,7 @@
 import chess
 
 class Engine:
-    def __init__(self, board, color, depth=5):
+    def __init__(self, board, color, depth=5, algorithm="minimax"):
         """
         Chess engine that finds a sequence of moves base
         board: chess.Board
@@ -15,6 +15,7 @@ class Engine:
         self._moves = []
         self._opponent = "white" if color=="black" else "black"
         self._depth = depth
+        self._algorithm = algorithm 
         # 1=PAWN, 2=KNIGHT, 3=BISHOP, 4=ROOK, 5=QUEEN, 6=KING
         self._piece_type_values = {1: 1, 2: 3, 3: 3, 4: 5, 5:9, 6:0}
 
@@ -23,7 +24,13 @@ class Engine:
         finds the sequence of moves based on the board
         """
 
-        _, board, moves = self._minimax(self._board, self._color, self._depth)
+        if self._algorithm == "minimax":
+            _, board, moves = self._minimax(self._board, self._color, self._depth)
+        elif self._algorithm == "alpha-beta":
+            _, board, moves = self._alpha_beta(self._board, self._color, self._depth, -float("inf"), float("inf"))
+        else:
+            print(f"the algorithm, {self._algorithm} is not supported. Currently, supporting minimax and alpha-beta pruning only.")
+            raise ValueError
 
         return moves
 
@@ -83,6 +90,60 @@ class Engine:
             best_boards.insert(0, best_move)
             return (best_move_value, best_move, best_boards)
 
+
+    def _alpha_beta(self, board, color_turn, depth, alpha, beta): 
+        if depth == 0 or board.is_checkmate():
+            return (self._heuristic_function(board, color_turn), board, [])
+
+        if color_turn == self._color:
+            best_move_value = -float("inf")
+            best_move = None
+            best_boards = []
+
+            for move in board.legal_moves:
+                new_board = board.copy()
+                new_board.push(move)
+
+                move_value, move_board, move_boards = self._alpha_beta(new_board, self._opponent, depth-1, alpha, beta)
+
+                if move_value >= best_move_value:
+                    best_move_value = move_value
+                    best_move = move
+                    best_boards = move_boards
+
+                alpha = max(alpha, best_move_value)
+
+                if alpha >= beta:
+                    break
+
+            # print(f"best_move: {new_board}, move: {move}, best_value: {best_move_value}, color: {color_turn}, depth: {depth}")
+            best_boards.insert(0, best_move)
+            return (best_move_value, best_move, best_boards)
+
+        elif color_turn != self._color:
+            best_move_value = float("inf")
+            best_move = None
+            best_boards = []
+
+            for move in board.legal_moves:
+                new_board = board.copy()
+                new_board.push(move)
+
+                move_value, move_board, move_boards = self._alpha_beta(new_board, self._color, depth-1, alpha, beta)
+
+                if move_value <= best_move_value:
+                    best_move_value = move_value
+                    best_move = move
+                    best_boards = move_boards
+
+                beta = min(beta, best_move_value)
+
+                if beta <= alpha:
+                    break
+
+            # print(f"best_move: {new_board}, move: {move}, best_value: {best_move_value}, color: {color_turn}, depth: {depth}")
+            best_boards.insert(0, best_move)
+            return (best_move_value, best_move, best_boards)
 
 
     def _heuristic_function(self, board, color):

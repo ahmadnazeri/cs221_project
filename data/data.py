@@ -23,7 +23,7 @@ class Dataset:
                     data_point = Data(
                                     board=chess.Board(row["board"]), 
                                     color=row["color"], 
-                                    mate_in=row["number_of_moves_to_mate"],
+                                    mate_in=int(row["number_of_moves_to_mate"]),
                                     move_sequence=row["move_sequence"]
                                 )
                     data.append(data_point)
