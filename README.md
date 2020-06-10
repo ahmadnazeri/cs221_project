@@ -47,3 +47,12 @@ While being in `cs221_project` directory and virtual environment
 ```
 python3 main.py
 ```
+
+
+####Data
+In order to make the raw data in a clean format; you can leverage the `clean_data.py`
+```
+cd resources
+python3 clean_data.py
+```
+
