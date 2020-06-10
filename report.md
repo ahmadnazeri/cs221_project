@@ -96,10 +96,8 @@ the input data was taken from internet and had many inconsistencies in the PGN. 
 Oracle: Our input data has the optimal number of moves to mate; which is provided by chess engines. We have used this oracle value to evaluate how successful our engine is at solving chess puzzles.
 
 Results:
-In the first iteration of this project, we believe that we will get a low value for f. But we will still have some starting positions where the engine will not be able to determine the checkmate
-moves. This will be as a result of the engine looking at only 4 levels deep from each position. In order to improve on this, we can increase the depth but it will become slower. We could
-increase the depth size a little by implementing the alpha-beta pruning algorithm. 
-This would give us a significantly lower value for f.
+for puzzles with mate in one or two moves, we get 100% accuracy and average 0 deviation from the oracle.
+
 
 Challenges and future improvements:
 
@@ -108,5 +106,12 @@ we also had three other set of puzzles of 222,490,463 puzzles of mate in 2,3 and
 
 Since we constrained our engine to look at moves that will result in checkmate, this challenge becomes a little more
 difficult because we had to find positions that resulted in mate. However as a side effect this challenge also minimize the workload on the algorithm because we already knew the optimal solution will be a mate.
-Another corner case was when last step was a promotion of a pawn which resulted in mate for the opposite color. given more time, we could adjust our evaluation function to take care of such scenarios. A complex game like chess has so many variations and covering all such corner cases would require a lot more use cases and time than we could devote to this project however we were happy to implement what we learnt in the class of CS221.
 
+as the number of moves to win increases ( at level 3 or 4, number of moves increases so drammatically that it takes too long to solve a puzzle. for reference expected number of moves for a given FEN is depth 1: ~20, depth 2: ~400, depth 3: ~9,000, depth 4:~200,000 depth 5: ~5,000,000 depth 6:~120,000,000, depth 7: ~3,000,000,000 and depth 8: ~85,000,000,000 and we need to compute these after  every legal move. (ref. https://www.chessprogramming.org/Perft_Results)
+consequently when we have puzzles where we need 3 or more moves for each color to mate which is effectively(2n-1) actual game levels, means at least 5 million board positions at tree depth of 5 per move, our limited capacity of laptops couldn't compute it in reasonable time. 
+
+The possible improvement could be to use multithreaded search which would speed it up by a factor of number of processors present. also given sufficient memory, we could store evaluation of subtrees which would speedup computation at the cost of memory. pre-computed endgame tables would also help avoid exhaustive search. 
+
+Another corner case was when last step was a promotion of a pawn which resulted in mate for the opposite color. given more time, we could adjust our evaluation function to take care of such scenarios where 
+
+scenarios. A complex game like chess has so many variations and covering all such corner cases would require a lot more use cases and time than we could devote to this project however we were happy to implement what we learnt in the class of CS221.
